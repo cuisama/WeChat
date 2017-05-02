@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <link rel="stylesheet" href="bootstrap.css">
+    <script type="text/javascript" src="jquery-3.2.0.js"></script>
+    <script type="text/javascript">
+        var ACCESS_TOKEN = "";
+        function MyAjax(url,data,succ,err) {
+            $.ajax({
+//                url:"118.89.228.159:8080/WeChat"+url,
+                url:"https://api.weixin.qq.com/cgi-bin/"+url,
+                    type:"get",
+                dataType:"JSONP",
+                data:data||{
+                    access_token:ACCESS_TOKEN
+                },
+                sucssful:succ||function (data) {
+                    console.log(data);
+                },
+                error:err||function (data) {
+                    console.log(data);
+                }
+            })
+        }
+//        $.ajax({
+//            url:"localhost:8080/geekhobby/weixin",
+//            type:"post",
+//            dataType:"xml",
+//            data:{
+//                //access_token:"6RgSGLQOHUfkhsB06s-f4NBQ219bF0xipCroJOpt7Jx8mbx6w-GpTgJhO8asNLj-ddDMv6YJvY1UxUxzu69Is2SnTa-2JTd41UF1aY7FIP6f0kWKxbZpcEkP-woQJI2ZLZIgAGAWKT",
+//                signature:"54c53dbffa635a74875fdfe31da64598f5451eca",
+//                timestamp:"1492682003",
+//                nonce:"557516461",
+//                openid:"ofqyPs0YtwKwFAhZ5Xo6U5lID4Dk"
+//            },
+//            sucssful:function (data) {
+//                console.log(data);
+//            },
+//            error:function (data) {
+//                console.log(data);
+//            }
+//        })
+        function token() {
+            MyAjax("token",{
+                grant_type:"client_credential",//获取access_token填写client_credential
+                appid:"wx60e890458220a2dd",//第三方用户唯一凭证
+                secret:"f7c65b20e4a50de44d26c88aaf400024",//第三方用户唯一凭证密钥，即appsecret
+            },function (data) {
+                //{"access_token":"ACCESS_TOKEN","expires_in":7200}
+                ACCESS_TOKEN=data.access_token;
+            },function (data) {
+                //{"errcode":40013,"errmsg":"invalid appid"}
+                console.log(data)
+            })
+        }
+        function get_current_autoreply_info() {
+            MyAjax("get_current_autoreply_info");
+        }
+        function getcallbackip() {
+            MyAjax("getcallbackip");
+        }
+
+
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <!--https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET-->
+            <a href="#" onclick="token()">获取access_token</a>
+        </div>
+        <div>
+            <a href="#" onclick="get_current_autoreply_info()">获取公众号的自动回复规则</a>
+        </div>
+        <div>
+            <!--https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=ACCESS_TOKEN-->
+            <a href="#" onclick="getcallbackip()">获取微信服务器IP地址</a>
+        </div>
+        <div>
+            <!--https://api.weixin.qq.com/cgi-bin/user/get?access_token=ACCESS_TOKEN&next_openid=NEXT_OPENID-->
+            <!--{"total":2,"count":2,"data":{"openid":["","OPENID1","OPENID2"]},"next_openid":"NEXT_OPENID"}
+            {"errcode":40013,"errmsg":"invalid appid"}-->
+            <a href="#" onclick="">获取用户列表</a>
+        </div>
+    </div>
+</body>
+</html>
