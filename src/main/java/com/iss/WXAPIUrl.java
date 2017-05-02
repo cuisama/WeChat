@@ -29,7 +29,6 @@ public class WXAPIUrl {
      "groupid": 0,
      "tagid_list":[128,2]
      }
-     {"errcode":40013,"errmsg":"invalid appid"}
      */
     public static String USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN ";
 
@@ -40,7 +39,28 @@ public class WXAPIUrl {
     /**
      * 获取用户列表
      * {"total":2,"count":2,"data":{"openid":["","OPENID1","OPENID2"]},"next_openid":"NEXT_OPENID"}
-     * {"errcode":40013,"errmsg":"invalid appid"}
      */
     public static String USER_LIST="https://api.weixin.qq.com/cgi-bin/user/get?access_token=ACCESS_TOKEN&next_openid=NEXT_OPENID";
+
+    /**
+     * 获取微信服务器IP地址
+     * {
+     "ip_list": [
+     "127.0.0.1",
+     "127.0.0.2",
+     "101.226.103.0/25"
+     ]
+     }
+     */
+    public static String WEIXIN_IP= "https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=ACCESS_TOKEN";
+
+    /**
+     * http请求方式：POST
+     * {
+     "tag" : {
+     "name" : "广东"//标签名
+     }
+     }
+     */
+    public static String aa="https://api.weixin.qq.com/cgi-bin/tags/create?access_token=ACCESS_TOKEN";
 }
