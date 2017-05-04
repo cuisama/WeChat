@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>通过后台调用微信api</title>
+    <link rel="stylesheet" href="bootstrap.css">
+    <script src="jquery-3.2.0.js"></script>
+    <script>
+        function MyAjax(url,data,succ,err){
+            $.ajax({
+                url:"http://localhost:8080/WeChat/APITestServlet?api="+url,
+                type:"post",
+                dataType:"json",
+                data:data||{},
+                success:succ||function (data) {
+                    console.log(data);
+                },
+                error:err||function (data) {
+                    console.log(data);
+                }
+            })
+        }
+        function getUserList() {
+            MyAjax("getUserList",{},function (data) {
+                console.log(data);
+                user_list = data&&data.data.openid;
+            });
+        }
+
+        var user_list = undefined;
+        function listUserInfo() {
+            var user = [];
+            if(user_list==undefined){
+                console.log("先获取用户列表");
+                return;
+            }
+            user_list.forEach(function (value,index,o) {
+                user.push({
+                    openid:value,
+                    lang:"zh_CN"
+                })
+            });
+            var jsonParam = {
+                "user_list":user
+            }
+            MyAjax("listUserInfo",{
+                "jsonParam":JSON.stringify(jsonParam)
+            });
+        }
+        function getUserInfo() {
+            MyAjax("getUserInfo",{
+                openid:$("#openid").val()
+            });
+        }
+        function massSendByOpenid() {
+            console.log("已禁止使用");
+            return;
+            var jsonParam = {
+                touser:["oDMpRv_P7d8jA8j2QKswLakFNfn4","oDMpRv1XMSy4dfkHZR5KDvMZHZKk"],
+                msgtype:"text",
+                text:{
+                    content:"来自 根据OpenID列表群发 功能"
+                }
+            }
+            MyAjax("massSendByOpenid",{
+                "jsonParam":JSON.stringify(jsonParam)
+            });
+        }
+        function massSendGetState() {
+            MyAjax("massSendGetState",{
+                "jsonParam":JSON.stringify({msg_id:"3147483650"})
+            })
+        }
+        function addKfAccount() {
+            MyAjax("addKfAccount",{
+                "jsonParam":JSON.stringify({
+                    kf_account : "xiaocui_cool@126.com",
+                    nickname : "农夫山的猴",
+                    password : "",
+                })
+            })
+        }
+        function getKfList() {
+            MyAjax("getKfList");
+        }
+        function kfSend(type) {
+            if(type=="pic"){
+                //{"type":"image","media_id":"Arz6svyEcdoC6AqsaREjRzkgdjX7BuWh8Aor5CQ-awbdM3nG4CAsJ_C1bzuIVeze","created_at":1493880245}
+                MyAjax("kfSend",{
+                  jsonParam:JSON.stringify({
+                      "touser":"oDMpRv_P7d8jA8j2QKswLakFNfn4",
+                      "msgtype":"image",
+                      "image":{
+                              "media_id":"Arz6svyEcdoC6AqsaREjRzkgdjX7BuWh8Aor5CQ-awbdM3nG4CAsJ_C1bzuIVeze"
+                          }
+                  })
+                });
+            }else{
+                MyAjax("kfSend",{
+                    "jsonParam":JSON.stringify({
+                        touser:"oDMpRv_P7d8jA8j2QKswLakFNfn4",
+                        msgtype:"text",
+                        text:{
+                            content:"来自 客服接口-发消息 功能"
+                        }
+                    })
+                });
+            }
+        }
+        function uploadMedia() {
+            MyAjax("uploadMedia",{
+                imagePath:$("#imagePath").val()
+            });
+        }
+        function createTag() {
+            MyAjax("createTag",{
+                jsonParam:JSON.stringify({
+                    tag : {
+                        "name" : "忠实粉丝"//标签名
+                    }
+                })
+            });
+        }
+        function getTags() {
+            MyAjax("getTags");
+        }
+        function getTagUsers() {
+            MyAjax("getTagUsers",{
+                jsonParam:JSON.stringify({
+                    tagid : 100,
+                    next_openid:""//第一个拉取的OPENID，不填默认从头开始拉取
+                })
+            });
+        }
+        function batchTagging() {
+            MyAjax("batchTagging",{
+                jsonParam:JSON.stringify({
+                    openid_list : [//粉丝列表
+                        "oDMpRv_P7d8jA8j2QKswLakFNfn4",
+                        //"oDMpRv1XMSy4dfkHZR5KDvMZHZKk"
+                    ],
+                    tagid : 100
+                })
+            });
+        }
+        function listUserTags() {
+            MyAjax("listUserTags",{
+                jsonParam:JSON.stringify({
+                    "openid" : "oDMpRv_P7d8jA8j2QKswLakFNfn4"
+                })
+            });
+        }
+        function createMenu(op) {
+            if(op=="del"){
+                MyAjax("deleteMenu");
+                return;
+            }
+            MyAjax("createMenu",{
+                jsonParam:JSON.stringify({
+                    button:[
+//                        {
+//                            type:"click",
+//                            name:"今日歌曲",
+//                            key:"V1001_TODAY_MUSIC"
+//                        },
+                        {
+                            name:"菜单",
+                            sub_button:[
+                                {
+                                    type:"view",
+                                    name:"搜索",
+                                    url:"http://www.soso.com/"
+                                },
+//                                {
+//                                    type:"miniprogram",
+//                                    name:"wxa",
+//                                    url:"http://mp.weixin.qq.com",
+//                                    appid:"wx286b93c14bbf93aa",
+//                                    pagepath:"pages/lunar/index.html"
+//                                },
+                                {
+                                    type:"click",
+                                    name:"赞一下我们",
+                                    key:"V1001_GOOD"
+                                }]
+                        },
+                        {
+                            "name": "扫码",
+                            "sub_button": [
+                                {
+                                    "type": "scancode_waitmsg",
+                                    "name": "扫码带提示",
+                                    "key": "rselfmenu_0_0",
+                                    "sub_button": [ ]
+                                },
+                                {
+                                    "type": "scancode_push",
+                                    "name": "扫码推事件",
+                                    "key": "rselfmenu_0_1",
+                                    "sub_button": [ ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "发图",
+                            "sub_button": [
+                                {
+                                    "type": "pic_sysphoto",
+                                    "name": "系统拍照发图",
+                                    "key": "rselfmenu_1_0",
+                                    "sub_button": [ ]
+                                },
+                                {
+                                    "type": "pic_photo_or_album",
+                                    "name": "拍照或者相册发图",
+                                    "key": "rselfmenu_1_1",
+                                    "sub_button": [ ]
+                                },
+                                {
+                                    "type": "pic_weixin",
+                                    "name": "微信相册发图",
+                                    "key": "rselfmenu_1_2",
+                                    "sub_button": [ ]
+                                }
+                            ]
+                        },
+//                        {
+//                            "name": "发送位置",
+//                            "type": "location_select",
+//                            "key": "rselfmenu_2_0"
+//                        },
+//                        {
+//                            "type": "media_id",
+//                            "name": "图片",
+//                            "media_id": "MEDIA_ID1"
+//                        },
+//                        {
+//                            "type": "view_limited",
+//                            "name": "图文消息",
+//                            "media_id": "MEDIA_ID2"
+//                        }
+                            ]
+                })
+            })
+        }
+        function getMenu() {
+            MyAjax("getMenu");
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="#" onclick="getUserList()">获取用户列表</a>
+        </div>
+        <div>
+            <a href="#" onclick="listUserInfo()">批量获取用户信息</a>
+        </div>
+        <div>
+            <a href="#" onclick="getUserInfo()">根据openid获取用户信息</a>
+            <input type="text" id="openid" value="oDMpRv_P7d8jA8j2QKswLakFNfn4">
+        </div>
+        <div>
+            <a href="#" onclick="massSendByOpenid()">根据OpenID列表群发</a>
+        </div>
+        <div>
+            <a href="#" onclick="massSendGetState()">查询群发消息发送状态</a>
+        </div>
+        <div style="padding: 10px">
+            客服帐号管理(须先在公众平台官网为公众号设置微信号后才能使用该能力)
+            <div>
+                <a href="#" onclick="addKfAccount()">添加客服帐号</a>
+            </div>
+            <div>
+                <a href="#" onclick="getKfList()">获取所有客服账号</a>
+            </div>
+        </div>
+
+        <div>
+            <!--48小时内发生的交互行为-->
+            <!--1、用户发送信息-->
+            <!--2、点击自定义菜单（仅有点击推事件、扫码推事件、扫码推事件且弹出“消息接收中”提示框这3种菜单类型是会触发客服接口的）-->
+            <!--3、关注公众号-->
+            <!--4、扫描二维码-->
+            <!--5、支付成功-->
+            <!--6、用户维权-->
+            <a href="#" onclick="kfSend()">客服接口-发消息（文本类型）</a>
+        </div>
+        <div>
+            <a href="#" onclick="kfSend('pic')">客服接口-发消息（图片类型）</a>
+        </div>
+        <div>
+            <a href="#" onclick="uploadMedia()">新增临时素材</a>
+            <input type="text" id="imagePath" value="C:\Users\yxcui\Desktop\aa.jpg">
+        </div>
+        <div>
+            <a href="#" onclick="createTag()">创建标签</a>
+        </div>
+        <div>
+            <a href="#" onclick="getTags()">获取公众号已创建的标签</a>
+        </div>
+        <div>
+            <a href="#" onclick="getTagUsers()">获取标签下粉丝列表</a>
+        </div>
+        <div>
+            <a href="#" onclick="batchTagging()">批量为用户打标签</a>
+        </div>
+        <div>
+            <a href="#" onclick="listUserTags()">获取用户身上的标签列表</a>
+        </div>
+
+        <div>
+            <a href="#" onclick="createMenu()">自定义菜单创建接口</a>
+            <a href="#" onclick="createMenu('del')">【清除所有】</a>
+        </div>
+        <div>
+            <a href="#" onclick="getMenu()">自定义菜单查询接口</a>
+        </div>
+
+
+
+
+        <!--<div>-->
+            <!--<form method="POST" action-target="http://file.api.weixin.qq.com/cgi-bin/media/upload"-->
+                  <!--target="result-iframe" form-method="POST" form-type="args" return-type="json" enctype="multipart/form-data">-->
+                <!--<div class="inputDiv">-->
+                    <!--<span class="name">media : </span>-->
+                    <!--<input type="file" name="media" method="POST" data-type="file" required="true">-->
+                    <!--<span class="tips">form-data中媒体文件标识，有filename、filelength、content-type等信息</span>-->
+                <!--</div>-->
+
+                <!--<input type="submit" class="unsubmit" id="submit" value="检查问题">-->
+            <!--</form>-->
+        <!--</div>-->
+    </div>
+</body>
+</html>

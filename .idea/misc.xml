@@ -143,9 +143,6 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8 _32" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
-  <component name="SvnConfiguration">
-    <configuration>C:\Users\yxcui\AppData\Roaming\Subversion</configuration>
-  </component>
   <component name="VssConfiguration">
     <option name="CLIENT_PATH" value="C:\Program Files (x86)\Microsoft Visual SourceSafe\ss.exe" />
     <option name="SRCSAFEINI_PATH" value="\\192.168.86.224\vsspool\20161219_CMATC_01\srcsafe.ini" />
